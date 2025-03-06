@@ -4,6 +4,9 @@ import { useForm } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   username: z
@@ -18,6 +21,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -27,8 +31,25 @@ const RegisterPage = () => {
   });
 
   const onSubmit = async (data: FormData) => {
-    console.log("Register Data:", data);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      // Send the POST request with Axios
+      const response = await axios.post(
+        "http://localhost:4004/api/auth/register",
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        toast("Registration successful");
+      }
+      navigate("/login");
+    } catch (error: any) {
+      toast("Registration failed");
+    }
   };
   return (
     <div className="max-w-md mx-auto mt-10 p-6 border rounded-lg shadow-lg">
