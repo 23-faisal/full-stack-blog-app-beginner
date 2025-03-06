@@ -1,8 +1,8 @@
 import express from "express";
 import "dotenv/config";
 import cors from "cors";
-import e from "express";
 import authRouter from "./routes/auth.route.js";
+import connectToDatabase from "./config/db.js";
 
 const app = express();
 
@@ -13,7 +13,6 @@ app.use(
     origin: process.env.CLIENT_URL,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
-     
   })
 );
 
@@ -27,6 +26,7 @@ app.get("/health", (req, res) => {
 // auth
 app.use("/api/auth", authRouter);
 
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT, async () => {
   console.log(`Server is running on port ${process.env.PORT}`);
+  await connectToDatabase();
 });
